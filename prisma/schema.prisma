@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  merchants Merchant[]
+  payments  Payment[]
+}
+
+model Merchant {
+  id         String          @id @default(uuid())
+  name       String
+  apiKey     String          @unique
+  createdAt  DateTime        @default(now())
+  userId     String
+  user       User            @relation(fields: [userId], references: [id])
+  payments   Payment[]
+  methods    PaymentMethod[]
+  qrPayments QrPayment[]
+  webhooks   WebhookEvent[]
+}
+
+model PaymentMethod {
+  id          String    @id @default(uuid())
+  type        String
+  description String?
+  merchantId  String
+  payments    Payment[]
+  merchant    Merchant  @relation(fields: [merchantId], references: [id])
+}
+
+model QrPayment {
+  id         String    @id @default(uuid())
+  codeString String    @unique
+  amount     Float
+  status     qr_status @default(ACTIVE)
+  expiresAt  DateTime
+  merchantId String
+  createdAt  DateTime  @default(now())
+  payment    Payment?
+  merchant   Merchant  @relation(fields: [merchantId], references: [id])
+
+  @@index([merchantId, status, expiresAt])
+}
+
+model Payment {
+  id              String         @id @default(uuid())
+  amount          Float
+  currency        currency_code
+  status          payment_status @default(PENDING)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  merchantId      String
+  userId          String
+  paymentMethodId String?
+  qrId            String?        @unique
+  merchant        Merchant       @relation(fields: [merchantId], references: [id])
+  paymentMethod   PaymentMethod? @relation(fields: [paymentMethodId], references: [id])
+  qrPayment       QrPayment?     @relation(fields: [qrId], references: [id])
+  user            User           @relation(fields: [userId], references: [id])
+  webhookEvents   WebhookEvent[]
+
+  @@index([createdAt])
+  @@index([merchantId, status])
+}
+
+model WebhookEvent {
+  id            String           @id @default(uuid())
+  eventType     String
+  payload       Json
+  status        webhook_status   @default(PENDING)
+  nextAttemptAt DateTime?
+  createdAt     DateTime         @default(now())
+  merchantId    String
+  paymentId     String?
+  attempts      WebhookAttempt[]
+  merchant      Merchant         @relation(fields: [merchantId], references: [id])
+  payment       Payment?         @relation(fields: [paymentId], references: [id])
+  test          WebhookTest?
+
+  @@index([status, nextAttemptAt])
+}
+
+model WebhookAttempt {
+  id             String         @id @default(uuid())
+  webhookEventId String
+  status         webhook_status
+  responseCode   Int?
+  responseBody   String?
+  createdAt      DateTime       @default(now())
+  webhookEvent   WebhookEvent   @relation(fields: [webhookEventId], references: [id])
+}
+
+model WebhookTest {
+  id             String       @id @default(uuid())
+  webhookEventId String       @unique
+  sent           Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  webhookEvent   WebhookEvent @relation(fields: [webhookEventId], references: [id])
+}
+
+enum currency_code {
+  BRL
+  USD
+  EUR
+}
+
+enum payment_status {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELED
+}
+
+enum qr_status {
+  ACTIVE
+  EXPIRED
+  USED
+}
+
+enum webhook_status {
+  PENDING
+  SUCCESS
+  FAILED
+  RETRYING
+}

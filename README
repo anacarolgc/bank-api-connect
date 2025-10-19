@@ -1,0 +1,46 @@
+💸 Bank-api-connect — Backend em Node.js + TypeScript
+
+A API Financeira é um projeto backend desenvolvido em Node.js com TypeScript, utilizando Express, Prisma ORM e PostgreSQL.
+Seu objetivo é simular o funcionamento de uma plataforma financeira completa, permitindo o cadastro de usuários, gerenciamento de comerciantes (merchants), processamento de pagamentos e integração com webhooks.
+
+O sistema foi construído com foco em segurança, escalabilidade e boas práticas de desenvolvimento backend.
+
+🚀 Tecnologias Utilizadas
+
+Node.js → Ambiente de execução JavaScript.
+
+TypeScript → Tipagem estática e maior segurança no código.
+
+Express.js → Framework para criação de rotas e controle HTTP.
+
+Prisma ORM → Mapeamento objeto-relacional e acesso simplificado ao banco.
+
+PostgreSQL → Banco de dados relacional.
+
+JWT (JSON Web Token) → Autenticação segura.
+
+Bcrypt → Criptografia de senhas.
+
+Dotenv → Gerenciamento de variáveis de ambiente.
+
+Crypto → Geração de chaves seguras (API Keys).
+
+📈 Boas Práticas Adotadas
+
+✅ Arquitetura modular (controllers, routes, middlewares)
+✅ Tipagem forte com TypeScript
+✅ Hash seguro de senhas com Bcrypt
+✅ Geração de API Keys únicas com módulo Crypto
+✅ Conexão segura com banco PostgreSQL via Prisma
+✅ Middleware de autenticação JWT
+✅ Respostas padronizadas em JSON
+
+🧑‍💻 Autora
+
+Ana Caroline
+Desenvolvedora Backend | Projeto API Financeira
+
+💼 Projeto criado para fins acadêmicos e práticos, com foco em segurança, autenticação e integração financeira.
+
+📧 Contato: [anacarolinegg1234@gmail.com]
+🌐 GitHub: https://github.com/anacarolgc
